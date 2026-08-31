@@ -7,3 +7,7 @@ yarn.lock
 *.p12
 *.key
 *.mobileprovision
+node_modules/
+.expo/
+dist/
+.vercel

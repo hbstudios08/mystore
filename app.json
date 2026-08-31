@@ -5,7 +5,8 @@
     "privacy": "public",
     "platforms": [
       "ios",
-      "android"
+      "android",
+      "web"
     ],
     "version": "1.7.1",
     "orientation": "portrait",
@@ -23,6 +24,10 @@
     ],
     "ios": {
       "supportsTablet": true
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
     },
     "description": "Argon React Native, based on Argon Design System. Coded by Creative Tim"
   }
