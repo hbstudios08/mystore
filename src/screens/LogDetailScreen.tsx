@@ -38,7 +38,7 @@ export function LogDetailScreen() {
 
   if (!log) {
     return (
-      <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <View style={[styles.container, { backgroundColor: 'transparent' }]}>
         <Text style={{ color: colors.textMuted }}>This log entry no longer exists.</Text>
       </View>
     );
@@ -71,7 +71,7 @@ export function LogDetailScreen() {
   }
 
   return (
-    <ScrollView style={{ backgroundColor: colors.background }} contentContainerStyle={styles.container}>
+    <ScrollView style={{ backgroundColor: 'transparent' }} contentContainerStyle={styles.container}>
       <Card>
         <Text style={[styles.saltName, { color: colors.text }]}>{salt.commonName}</Text>
         <Text style={[styles.meta, { color: colors.textMuted }]}>

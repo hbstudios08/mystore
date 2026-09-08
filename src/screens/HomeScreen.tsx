@@ -36,7 +36,7 @@ export function HomeScreen() {
 
   return (
     <ScrollView
-      style={{ backgroundColor: colors.background }}
+      style={{ backgroundColor: 'transparent' }}
       contentContainerStyle={styles.container}
     >
       <Text style={[styles.greeting, { color: colors.text }]}>

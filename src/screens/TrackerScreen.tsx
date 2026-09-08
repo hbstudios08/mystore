@@ -20,7 +20,7 @@ export function TrackerScreen() {
   const logs = useAppStore((s) => s.logs);
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <View style={[styles.container, { backgroundColor: 'transparent' }]}>
       <View style={styles.headerRow}>
         <Text style={[styles.title, { color: colors.text }]}>Symptom Tracker</Text>
         <Button label="+ New" small onPress={() => navigation.navigate('LogEntry', {})} />

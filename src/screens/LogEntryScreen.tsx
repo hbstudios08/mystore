@@ -64,7 +64,7 @@ export function LogEntryScreen() {
   }
 
   return (
-    <ScrollView style={{ backgroundColor: colors.background }} contentContainerStyle={styles.container}>
+    <ScrollView style={{ backgroundColor: 'transparent' }} contentContainerStyle={styles.container}>
       <SectionHeader title="Log Entry" subtitle="Track a symptom and the salt you're taking" />
 
       <Card style={{ marginTop: SPACING.md }}>

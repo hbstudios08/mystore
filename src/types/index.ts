@@ -91,6 +91,8 @@ export interface LogEntry {
   notes?: string;
 }
 
+import { GradientThemeId } from '../constants/theme';
+
 export interface UserProfile {
   name?: string;
   birthDate?: string; // ISO date string
@@ -100,6 +102,7 @@ export interface UserProfile {
   darkMode: boolean;
   hasSeenDisclaimer: boolean;
   notificationsEnabled: boolean;
+  gradientThemeId: GradientThemeId;
 }
 
 export interface SaltEfficacyStat {

@@ -5,12 +5,14 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { RootNavigator } from './src/navigation/RootNavigator';
 import { DisclaimerModal } from './src/components/DisclaimerModal';
 import { ErrorBoundary } from './src/components/ErrorBoundary';
+import { GradientBackdrop } from './src/components/GradientBackdrop';
 import { useTheme } from './src/utils/useTheme';
 
 function AppShell() {
   const { isDark } = useTheme();
   return (
     <>
+      <GradientBackdrop />
       <RootNavigator />
       <DisclaimerModal />
       <StatusBar style={isDark ? 'light' : 'dark'} />

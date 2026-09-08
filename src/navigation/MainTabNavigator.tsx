@@ -1,6 +1,7 @@
 import React from 'react';
-import { Text } from 'react-native';
+import { Text, StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { BlurView } from 'expo-blur';
 import { HomeScreen } from '../screens/HomeScreen';
 import { DirectoryScreen } from '../screens/DirectoryScreen';
 import { TrackerScreen } from '../screens/TrackerScreen';
@@ -25,10 +26,25 @@ export function MainTabNavigator() {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        headerStyle: { backgroundColor: colors.surface },
+        // Smooth cross-fade + slide when switching between tabs, instead of
+        // an abrupt cut.
+        animation: 'shift',
+        sceneStyle: { backgroundColor: 'transparent' },
+        headerStyle: { backgroundColor: colors.glassFillStrong },
         headerTintColor: colors.text,
         headerShadowVisible: false,
-        tabBarStyle: { backgroundColor: colors.surface, borderTopColor: colors.border },
+        tabBarStyle: {
+          backgroundColor: 'transparent',
+          borderTopColor: colors.glassBorder,
+          borderTopWidth: StyleSheet.hairlineWidth,
+        },
+        tabBarBackground: () => (
+          <BlurView
+            intensity={60}
+            tint={colors.glassTint}
+            style={[StyleSheet.absoluteFill, { backgroundColor: colors.glassFillStrong }]}
+          />
+        ),
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textMuted,
         tabBarIcon: ({ color, size }) => (

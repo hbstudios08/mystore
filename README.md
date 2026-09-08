@@ -72,8 +72,16 @@ QR code with **Expo Go** on your device.
 5. **Efficacy Reporting** — Rate relief with a 5-star scale and a relief-level
    tag; view a "Most Effective Salts" ranking, total-uses-vs-success-rate
    breakdown, and export your full history to JSON or a formatted PDF.
-6. **Profile & Settings** — Set name, birth date (auto-fills Sun Sign),
-   Ascendant, Moon Sign, dark mode, and notification preferences.
+6. **Profile & Settings** — Set name, birth date (directly typeable, auto-
+   fills Sun Sign), Ascendant, Moon Sign, dark mode, notification
+   preferences, and your glass UI gradient theme.
+7. **Glassmorphic UI** — Every card is a blurred, translucent glass surface
+   (`expo-blur`) floating over a full-screen animated gradient backdrop.
+   Six gradient presets (Nebula, Ocean, Sunset, Aurora, Rose Quartz,
+   Midnight) are selectable from Profile, each with a light/dark variant.
+8. **Smooth tab transitions** — Bottom tabs cross-fade/slide (`animation:
+   'shift'`) instead of cutting abruptly, and the tab bar itself is a
+   blurred glass surface.
 
 ## Notes on Implementation Choices
 
@@ -87,6 +95,25 @@ QR code with **Expo Go** on your device.
   in `src/store`.
 - **`expo-file-system`'s new `File`/`Paths` API** (SDK 54+) is used for JSON
   export instead of the deprecated `FileSystem.documentDirectory` string API.
+- **Birth date entry** (`src/components/DateInput.tsx`) is a directly
+  typeable `MM/DD/YYYY` field with input masking and validation — this is
+  the primary interaction on every platform, including web, where the
+  native `@react-native-community/datetimepicker` has inconsistent support.
+  On iOS/Android a calendar-icon button additionally opens the native
+  picker inside a `Modal` overlay (so it never disturbs page layout) as a
+  shortcut.
+- **Directory tab layout** was restructured so only the results `FlatList`
+  has `flex: 1` and everything above it (search + filter rows) is a fixed,
+  non-scrolling header block using plain horizontal `ScrollView`s instead of
+  nested `FlatList`s — this fixes the row-overlap you'd get
+  from an unsized scrollable child inside a flex column, and the screen is
+  wrapped in `SafeAreaView` for notch/inset safety on phones.
+- **Glass UI** (`src/components/Card.tsx`, `GradientBackdrop.tsx`) layers
+  `expo-blur`'s `BlurView` + a semi-transparent tint over a full-screen
+  `expo-linear-gradient` backdrop rendered once in `App.tsx`. All screen
+  containers use `backgroundColor: 'transparent'` so the gradient shows
+  through everywhere; the gradient itself cross-fades (via `Animated`) when
+  you switch presets or toggle dark mode.
 
 ## Suggested Next Steps
 

@@ -57,7 +57,7 @@ export function AnalyticsScreen() {
 
   if (logs.length === 0) {
     return (
-      <View style={[styles.container, { backgroundColor: colors.background, justifyContent: 'center' }]}>
+      <View style={[styles.container, { backgroundColor: 'transparent', justifyContent: 'center' }]}>
         <EmptyState
           icon="\u{1F4CA}"
           title="No data yet"
@@ -68,7 +68,7 @@ export function AnalyticsScreen() {
   }
 
   return (
-    <ScrollView style={{ backgroundColor: colors.background }} contentContainerStyle={styles.container}>
+    <ScrollView style={{ backgroundColor: 'transparent' }} contentContainerStyle={styles.container}>
       <SectionHeader title="Analytics" subtitle="What's working best for you" />
 
       <Card style={{ marginTop: SPACING.md }}>

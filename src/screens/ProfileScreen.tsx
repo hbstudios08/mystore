@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, TextInput, Switch, Platform, Alert } from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import { View, Text, ScrollView, StyleSheet, TextInput, Switch, Alert, Pressable } from 'react-native';
 import { useTheme } from '../utils/useTheme';
 import { useAppStore } from '../store/useAppStore';
 import { ZODIAC_SIGNS, getZodiacSignForDate } from '../constants/zodiac';
 import { Card } from '../components/Card';
-import { Button } from '../components/Button';
+import { DateInput } from '../components/DateInput';
 import { Chip, SectionHeader } from '../components/Basics';
 import { requestNotificationPermissions } from '../utils/notifications';
-import { SPACING, FONT_SIZES } from '../constants/theme';
+import { SPACING, FONT_SIZES, RADIUS, GRADIENT_THEME_ORDER, GRADIENT_THEMES } from '../constants/theme';
 import { ZodiacId } from '../types';
 
 export function ProfileScreen() {
@@ -16,19 +15,16 @@ export function ProfileScreen() {
   const profile = useAppStore((s) => s.profile);
   const updateProfile = useAppStore((s) => s.updateProfile);
   const toggleDarkMode = useAppStore((s) => s.toggleDarkMode);
+  const setGradientTheme = useAppStore((s) => s.setGradientTheme);
 
   const [name, setName] = useState(profile.name ?? '');
-  const [birthDate, setBirthDate] = useState(
-    profile.birthDate ? new Date(profile.birthDate) : new Date(2000, 0, 1)
-  );
-  const [showPicker, setShowPicker] = useState(false);
+  const birthDate = profile.birthDate ? new Date(profile.birthDate) : undefined;
 
   function handleSaveName() {
     updateProfile({ name: name.trim() || undefined });
   }
 
   function handleSetBirthDate(date: Date) {
-    setBirthDate(date);
     const sign = getZodiacSignForDate(date);
     updateProfile({ birthDate: date.toISOString(), sunSign: sign.id });
   }
@@ -70,7 +66,7 @@ export function ProfileScreen() {
   }
 
   return (
-    <ScrollView style={{ backgroundColor: colors.background }} contentContainerStyle={styles.container}>
+    <ScrollView style={{ backgroundColor: 'transparent' }} contentContainerStyle={styles.container}>
       <SectionHeader title="Profile" subtitle="Personalize your celestial dashboard" />
 
       <Card style={{ marginTop: SPACING.md }}>
@@ -91,25 +87,9 @@ export function ProfileScreen() {
 
       <Card style={{ marginTop: SPACING.md }}>
         <Text style={[styles.label, { color: colors.text }]}>Birth Date</Text>
-        <Button
-          label={birthDate.toLocaleDateString()}
-          variant="secondary"
-          small
-          onPress={() => setShowPicker(true)}
-          style={{ alignSelf: 'flex-start', marginTop: SPACING.sm }}
-        />
-        {showPicker && (
-          <DateTimePicker
-            value={birthDate}
-            mode="date"
-            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-            maximumDate={new Date()}
-            onChange={(_, selected) => {
-              setShowPicker(Platform.OS === 'ios');
-              if (selected) handleSetBirthDate(selected);
-            }}
-          />
-        )}
+        <View style={{ marginTop: SPACING.sm }}>
+          <DateInput value={birthDate} onChange={handleSetBirthDate} maximumDate={new Date()} />
+        </View>
         <Text style={{ color: colors.textMuted, fontSize: FONT_SIZES.xs, marginTop: SPACING.sm }}>
           Setting a birth date automatically calculates your Sun Sign below.
         </Text>
@@ -118,6 +98,47 @@ export function ProfileScreen() {
       {renderSignPicker('sunSign', 'Sun Sign')}
       {renderSignPicker('ascendant', 'Ascendant (Rising)')}
       {renderSignPicker('moonSign', 'Moon Sign')}
+
+      <Card style={{ marginTop: SPACING.lg }}>
+        <Text style={[styles.label, { color: colors.text }]}>Gradient Theme</Text>
+        <Text style={{ color: colors.textMuted, fontSize: FONT_SIZES.xs, marginTop: 2, marginBottom: SPACING.md }}>
+          Choose the backdrop behind the glass UI.
+        </Text>
+        <View style={styles.swatchRow}>
+          {GRADIENT_THEME_ORDER.map((id) => {
+            const preset = GRADIENT_THEMES[id];
+            const selected = profile.gradientThemeId === id;
+            return (
+              <Pressable
+                key={id}
+                onPress={() => setGradientTheme(id)}
+                style={styles.swatchWrap}
+              >
+                <View
+                  style={[
+                    styles.swatch,
+                    {
+                      backgroundColor: preset.swatch,
+                      borderColor: selected ? colors.gold : colors.border,
+                      borderWidth: selected ? 3 : StyleSheet.hairlineWidth,
+                    },
+                  ]}
+                />
+                <Text
+                  style={{
+                    color: selected ? colors.text : colors.textMuted,
+                    fontSize: FONT_SIZES.xs,
+                    fontWeight: selected ? '700' : '500',
+                    marginTop: 4,
+                  }}
+                >
+                  {preset.name}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
+      </Card>
 
       <Card style={{ marginTop: SPACING.lg }}>
         <View style={styles.switchRow}>
@@ -159,5 +180,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+  },
+  swatchRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  swatchWrap: {
+    alignItems: 'center',
+    width: 68,
+    marginBottom: SPACING.sm,
+  },
+  swatch: {
+    width: 44,
+    height: 44,
+    borderRadius: RADIUS.pill,
   },
 });

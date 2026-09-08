@@ -18,8 +18,8 @@ export function RootNavigator() {
     ...(isDark ? DarkTheme : DefaultTheme),
     colors: {
       ...(isDark ? DarkTheme.colors : DefaultTheme.colors),
-      background: colors.background,
-      card: colors.surface,
+      background: 'transparent',
+      card: colors.glassFillStrong,
       text: colors.text,
       border: colors.border,
       primary: colors.primary,
@@ -30,9 +30,10 @@ export function RootNavigator() {
     <NavigationContainer theme={navTheme}>
       <Stack.Navigator
         screenOptions={{
-          headerStyle: { backgroundColor: colors.surface },
+          headerStyle: { backgroundColor: colors.glassFillStrong },
           headerTintColor: colors.text,
           headerShadowVisible: false,
+          contentStyle: { backgroundColor: 'transparent' },
         }}
       >
         <Stack.Screen name="MainTabs" component={MainTabNavigator} options={{ headerShown: false }} />

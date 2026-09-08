@@ -35,7 +35,7 @@ export function CellSaltDetailScreen() {
   const sign = ZODIAC_MAP[salt.zodiacId];
 
   return (
-    <ScrollView style={{ backgroundColor: colors.background }} contentContainerStyle={styles.container}>
+    <ScrollView style={{ backgroundColor: 'transparent' }} contentContainerStyle={styles.container}>
       <View style={[styles.headerBanner, { backgroundColor: salt.color }]}>
         <ZodiacBadge sign={sign} size={72} selected />
         <View style={{ marginLeft: SPACING.md, flex: 1 }}>

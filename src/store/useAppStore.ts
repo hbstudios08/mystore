@@ -11,6 +11,7 @@ interface AppState {
   updateProfile: (updates: Partial<UserProfile>) => void;
   markDisclaimerSeen: () => void;
   toggleDarkMode: () => void;
+  setGradientTheme: (id: UserProfile['gradientThemeId']) => void;
 
   // Log actions
   addLogEntry: (entry: Omit<LogEntry, 'id' | 'createdAt' | 'followUps'>) => string;
@@ -31,6 +32,7 @@ const DEFAULT_PROFILE: UserProfile = {
   darkMode: false,
   hasSeenDisclaimer: false,
   notificationsEnabled: false,
+  gradientThemeId: 'nebula',
 };
 
 export const useAppStore = create<AppState>()(
@@ -47,6 +49,9 @@ export const useAppStore = create<AppState>()(
 
       toggleDarkMode: () =>
         set((state) => ({ profile: { ...state.profile, darkMode: !state.profile.darkMode } })),
+
+      setGradientTheme: (id) =>
+        set((state) => ({ profile: { ...state.profile, gradientThemeId: id } })),
 
       addLogEntry: (entry) => {
         const id = generateId();

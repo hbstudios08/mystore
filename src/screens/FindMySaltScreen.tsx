@@ -1,6 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, TextInput, Platform } from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import { View, Text, ScrollView, StyleSheet, TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTheme } from '../utils/useTheme';
@@ -8,6 +7,7 @@ import { getZodiacSignForDate } from '../constants/zodiac';
 import { CELL_SALT_MAP, findSaltsBySymptom } from '../constants/cellSalts';
 import { Card } from '../components/Card';
 import { Button } from '../components/Button';
+import { DateInput } from '../components/DateInput';
 import { SectionHeader } from '../components/Basics';
 import { CellSaltListItem } from '../components/CellSaltListItem';
 import { ZodiacBadge } from '../components/ZodiacBadge';
@@ -22,7 +22,6 @@ export function FindMySaltScreen() {
   const navigation = useNavigation<NavProp>();
   const [mode, setMode] = useState<Mode>('birthdate');
   const [birthDate, setBirthDate] = useState<Date>(new Date());
-  const [showPicker, setShowPicker] = useState(false);
   const [symptomQuery, setSymptomQuery] = useState('');
 
   const birthSign = useMemo(() => getZodiacSignForDate(birthDate), [birthDate]);
@@ -34,7 +33,7 @@ export function FindMySaltScreen() {
   );
 
   return (
-    <ScrollView style={{ backgroundColor: colors.background }} contentContainerStyle={styles.container}>
+    <ScrollView style={{ backgroundColor: 'transparent' }} contentContainerStyle={styles.container}>
       <SectionHeader
         title="Find My Salt"
         subtitle="Discover a cell salt by birth date or by active symptoms"
@@ -59,23 +58,8 @@ export function FindMySaltScreen() {
 
       {mode === 'birthdate' ? (
         <View style={{ marginTop: SPACING.lg }}>
-          <Button
-            label={`Birth Date: ${birthDate.toLocaleDateString()}`}
-            variant="secondary"
-            onPress={() => setShowPicker(true)}
-          />
-          {showPicker && (
-            <DateTimePicker
-              value={birthDate}
-              mode="date"
-              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-              onChange={(_, selected) => {
-                setShowPicker(Platform.OS === 'ios');
-                if (selected) setBirthDate(selected);
-              }}
-              maximumDate={new Date()}
-            />
-          )}
+          <Text style={[styles.fieldLabel, { color: colors.text }]}>Birth Date</Text>
+          <DateInput value={birthDate} onChange={setBirthDate} maximumDate={new Date()} />
 
           <Card style={{ marginTop: SPACING.lg }}>
             <View style={styles.resultRow}>
@@ -134,6 +118,11 @@ export function FindMySaltScreen() {
 }
 
 const styles = StyleSheet.create({
+  fieldLabel: {
+    fontSize: FONT_SIZES.md,
+    fontWeight: '700',
+    marginBottom: SPACING.sm,
+  },
   container: {
     padding: SPACING.lg,
     paddingBottom: SPACING.xxl,
