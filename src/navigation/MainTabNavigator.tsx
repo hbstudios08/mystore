@@ -21,7 +21,7 @@ const TAB_ICONS: Record<keyof MainTabParamList, string> = {
 };
 
 export function MainTabNavigator() {
-  const { colors } = useTheme();
+  const { colors, accent } = useTheme();
 
   return (
     <Tab.Navigator
@@ -45,7 +45,7 @@ export function MainTabNavigator() {
             style={[StyleSheet.absoluteFill, { backgroundColor: colors.glassFillStrong }]}
           />
         ),
-        tabBarActiveTintColor: colors.primary,
+        tabBarActiveTintColor: accent,
         tabBarInactiveTintColor: colors.textMuted,
         tabBarIcon: ({ color, size }) => (
           <Text style={{ color, fontSize: size * 0.8 }}>

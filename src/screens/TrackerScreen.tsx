@@ -15,7 +15,7 @@ import type { RootStackParamList } from '../navigation/types';
 type NavProp = NativeStackNavigationProp<RootStackParamList>;
 
 export function TrackerScreen() {
-  const { colors } = useTheme();
+  const { colors, accent } = useTheme();
   const navigation = useNavigation<NavProp>();
   const logs = useAppStore((s) => s.logs);
 
@@ -58,7 +58,7 @@ export function TrackerScreen() {
                   Started {formatDateTime(item.startDateTime)} · Severity {item.baselineSeverity}/10
                 </Text>
                 {lastFollowUp && (
-                  <Text style={{ color: colors.primary, fontSize: FONT_SIZES.xs, marginTop: 4, fontWeight: '600' }}>
+                  <Text style={{ color: accent, fontSize: FONT_SIZES.xs, marginTop: 4, fontWeight: '600' }}>
                     {item.followUps.length} follow-up{item.followUps.length > 1 ? 's' : ''} recorded
                   </Text>
                 )}

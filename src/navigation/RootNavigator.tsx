@@ -12,7 +12,7 @@ import type { RootStackParamList } from './types';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export function RootNavigator() {
-  const { colors, isDark } = useTheme();
+  const { colors, isDark, accent } = useTheme();
 
   const navTheme = {
     ...(isDark ? DarkTheme : DefaultTheme),
@@ -22,7 +22,7 @@ export function RootNavigator() {
       card: colors.glassFillStrong,
       text: colors.text,
       border: colors.border,
-      primary: colors.primary,
+      primary: accent,
     },
   };
 

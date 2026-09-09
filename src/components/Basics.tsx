@@ -22,15 +22,15 @@ interface ChipProps {
 }
 
 export function Chip({ label, selected = false, onPress }: ChipProps) {
-  const { colors } = useTheme();
+  const { colors, accent } = useTheme();
   return (
     <Pressable
       onPress={onPress}
       style={[
         styles.chip,
         {
-          backgroundColor: selected ? colors.primary : colors.surfaceAlt,
-          borderColor: selected ? colors.primary : colors.border,
+          backgroundColor: selected ? accent : colors.surfaceAlt,
+          borderColor: selected ? accent : colors.border,
         },
       ]}
     >

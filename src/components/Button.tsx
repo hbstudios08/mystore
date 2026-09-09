@@ -20,23 +20,23 @@ export function Button({
   style,
   small = false,
 }: ButtonProps) {
-  const { colors } = useTheme();
+  const { colors, accent } = useTheme();
 
   const backgroundColor =
     variant === 'primary'
-      ? colors.primary
+      ? accent
       : variant === 'danger'
       ? colors.danger
       : 'transparent';
 
   const borderColor =
-    variant === 'outline' ? colors.primary : variant === 'secondary' ? colors.border : 'transparent';
+    variant === 'outline' ? accent : variant === 'secondary' ? colors.border : 'transparent';
 
   const textColor =
     variant === 'primary' || variant === 'danger'
       ? colors.textInverse
       : variant === 'outline'
-      ? colors.primary
+      ? accent
       : colors.text;
 
   return (

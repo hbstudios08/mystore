@@ -119,6 +119,17 @@ export interface GradientPreset {
   swatch: string;
   light: string[];
   dark: string[];
+  /**
+   * Button/accent color for light mode — deep & saturated enough that
+   * white text stays readable on top of it (checked for ≥4.5:1 contrast).
+   */
+  accentLight: string;
+  /**
+   * Button/accent color for dark mode — pale & bright enough that dark
+   * navy text (ThemeColors.textInverse in dark mode) stays readable on
+   * top of it (checked for ≥4.5:1 contrast).
+   */
+  accentDark: string;
 }
 
 export const GRADIENT_THEMES: Record<GradientThemeId, GradientPreset> = {
@@ -128,6 +139,8 @@ export const GRADIENT_THEMES: Record<GradientThemeId, GradientPreset> = {
     swatch: '#7B5CE0',
     light: ['#E7E3FB', '#CFC6F7', '#B9A9EF'],
     dark: ['#1B1440', '#2E1E63', '#4A2A82'],
+    accentLight: '#6A3FD1',
+    accentDark: '#B7A6F5',
   },
   ocean: {
     id: 'ocean',
@@ -135,6 +148,8 @@ export const GRADIENT_THEMES: Record<GradientThemeId, GradientPreset> = {
     swatch: '#2F86C9',
     light: ['#DDF1F7', '#C4E4F2', '#A9CFEA'],
     dark: ['#071D33', '#0B3355', '#0F4C75'],
+    accentLight: '#1D6FA5',
+    accentDark: '#8FCBEF',
   },
   sunset: {
     id: 'sunset',
@@ -142,6 +157,8 @@ export const GRADIENT_THEMES: Record<GradientThemeId, GradientPreset> = {
     swatch: '#E8804F',
     light: ['#FDE9DC', '#FBD3B8', '#F3AE85'],
     dark: ['#2B0F14', '#5A1F26', '#8A3A2D'],
+    accentLight: '#B04A1F',
+    accentDark: '#F5B48A',
   },
   aurora: {
     id: 'aurora',
@@ -149,6 +166,8 @@ export const GRADIENT_THEMES: Record<GradientThemeId, GradientPreset> = {
     swatch: '#3FBFA5',
     light: ['#DFF7ED', '#C4EEDC', '#A6DFCE'],
     dark: ['#062420', '#0B3B37', '#125447'],
+    accentLight: '#137862',
+    accentDark: '#8EE0C9',
   },
   rosequartz: {
     id: 'rosequartz',
@@ -156,6 +175,8 @@ export const GRADIENT_THEMES: Record<GradientThemeId, GradientPreset> = {
     swatch: '#E27FA6',
     light: ['#FCE7EF', '#F8D0E1', '#F0B4D0'],
     dark: ['#2B0F1C', '#4A1930', '#6E2748'],
+    accentLight: '#C24B7C',
+    accentDark: '#F5B8D2',
   },
   midnight: {
     id: 'midnight',
@@ -163,6 +184,8 @@ export const GRADIENT_THEMES: Record<GradientThemeId, GradientPreset> = {
     swatch: '#3B4C7A',
     light: ['#E7EAF5', '#D2D8ED', '#B9C2E0'],
     dark: ['#050814', '#0D1330', '#161F4C'],
+    accentLight: '#2E3A63',
+    accentDark: '#A8B4E0',
   },
 };
 

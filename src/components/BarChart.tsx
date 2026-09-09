@@ -21,7 +21,7 @@ interface BarChartProps {
  * native-module version drift across Expo SDKs.
  */
 export function BarChart({ data, maxValue }: BarChartProps) {
-  const { colors } = useTheme();
+  const { colors, accent } = useTheme();
   const max = maxValue ?? Math.max(...data.map((d) => d.value), 1);
 
   return (
@@ -37,7 +37,7 @@ export function BarChart({ data, maxValue }: BarChartProps) {
               <View
                 style={[
                   styles.fill,
-                  { width: `${widthPct}%`, backgroundColor: d.color ?? colors.primary },
+                  { width: `${widthPct}%`, backgroundColor: d.color ?? accent },
                 ]}
               />
             </View>
