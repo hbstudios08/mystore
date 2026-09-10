@@ -3,7 +3,6 @@ import { Text, StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { BlurView } from 'expo-blur';
 import { HomeScreen } from '../screens/HomeScreen';
-import { DirectoryScreen } from '../screens/DirectoryScreen';
 import { TrackerScreen } from '../screens/TrackerScreen';
 import { AnalyticsScreen } from '../screens/AnalyticsScreen';
 import { ProfileScreen } from '../screens/ProfileScreen';
@@ -14,7 +13,6 @@ const Tab = createBottomTabNavigator<MainTabParamList>();
 
 const TAB_ICONS: Record<keyof MainTabParamList, string> = {
   Home: '\u2726',
-  Directory: '\u{1F9EA}',
   Tracker: '\u{1F4CB}',
   Analytics: '\u{1F4CA}',
   Profile: '\u{1F464}',
@@ -63,7 +61,6 @@ export function MainTabNavigator() {
       })}
     >
       <Tab.Screen name="Home" component={HomeScreen} options={{ title: 'Dashboard' }} />
-      <Tab.Screen name="Directory" component={DirectoryScreen} options={{ title: 'Directory' }} />
       <Tab.Screen name="Tracker" component={TrackerScreen} options={{ title: 'Tracker' }} />
       <Tab.Screen name="Analytics" component={AnalyticsScreen} options={{ title: 'Analytics' }} />
       <Tab.Screen name="Profile" component={ProfileScreen} options={{ title: 'Profile' }} />

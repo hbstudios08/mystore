@@ -33,8 +33,8 @@ and record how well it worked over time.
   /components     # Reusable UI: Card, Button, Chip, StarRating, BarChart, etc.
   /constants      # Zodiac dataset, Cell Salt dataset, theme tokens
   /navigation     # Root stack + bottom tab navigators, param list types
-  /screens        # Home, Directory, Detail, FindMySalt, LogEntry, LogDetail,
-                  # Tracker, Analytics, Profile
+  /screens        # Home, Detail, FindMySalt (search/filter/browse + quiz),
+                  # LogEntry, LogDetail, Tracker, Analytics, Profile
   /store          # Zustand store (profile + logs), persisted to AsyncStorage
   /types          # Shared TypeScript interfaces & static enums
   /utils          # date utils, notifications, export (PDF/JSON), theme hook
@@ -63,29 +63,31 @@ QR code with **Expo Go** on your device.
 
 1. **Home Dashboard** — Zodiac wheel, sun/moon/rising sign highlights, quick
    actions, and recent activity.
-2. **Cell Salt Directory** — Search + filter by zodiac sign or body system;
-   tap through to a full detail view (indications, deficiency symptoms,
-   dietary sources).
-3. **Find My Salt** — Quiz by birth date (auto zodiac calculation, including
-   the Capricorn year-wrap edge case) or by free-text symptom search.
-4. **Symptom Tracker** — Log active symptoms, the salt + potency taken,
+2. **Find My Salt** — Two modes in one screen: "By Birth Date" (auto zodiac
+   calculation, including the Capricorn year-wrap edge case) and "By
+   Symptom" — a full searchable/filterable browse of all 12 salts (search
+   by name or symptom, filter by body system), tapping through to a full
+   detail view (indications, deficiency symptoms, dietary sources). There
+   is no separate Directory tab — this screen is the single place to look
+   up a salt, whether you know your sign or just what's bothering you.
+3. **Symptom Tracker** — Log active symptoms, the salt + potency taken,
    start date/time, and baseline severity (1–10). Optional local
    notifications remind you to rate efficacy at 2h / 12h / 24h.
-5. **Efficacy Reporting** — Rate relief with a 5-star scale and a relief-level
+4. **Efficacy Reporting** — Rate relief with a 5-star scale and a relief-level
    tag; view a "Most Effective Salts" ranking, total-uses-vs-success-rate
    breakdown, and export your full history to JSON or a formatted PDF.
-6. **Profile & Settings** — Set name, birth date (directly typeable, auto-
+5. **Profile & Settings** — Set name, birth date (directly typeable, auto-
    fills Sun Sign), birth time & location (computes Moon Sign and Ascendant
    via real astronomical formulas — see below), dark mode, notification
    preferences, and your glass UI gradient theme.
-7. **Glassmorphic UI** — Every card is a blurred, translucent glass surface
+6. **Glassmorphic UI** — Every card is a blurred, translucent glass surface
    (`expo-blur`) floating over a full-screen animated gradient backdrop.
    Six gradient presets (Nebula, Ocean, Sunset, Aurora, Rose Quartz,
    Midnight) are selectable from Profile, each with a light/dark variant —
    and in dark mode, flat (non-blurred) surfaces like Chip backgrounds,
    TextInput fields, and list rows are also tinted toward the selected
    preset's hue instead of one fixed navy tone.
-8. **Smooth tab transitions** — Bottom tabs cross-fade/slide (`animation:
+7. **Smooth tab transitions** — Bottom tabs cross-fade/slide (`animation:
    'shift'`) instead of cutting abruptly, and the tab bar itself is a
    blurred glass surface.
 
@@ -134,12 +136,15 @@ calculator for anyone who already knows their placements.
   On iOS/Android a calendar-icon button additionally opens the native
   picker inside a `Modal` overlay (so it never disturbs page layout) as a
   shortcut.
-- **Directory tab layout** was restructured so only the results `FlatList`
-  has `flex: 1` and everything above it (search + filter rows) is a fixed,
-  non-scrolling header block using plain horizontal `ScrollView`s instead of
-  nested `FlatList`s — this fixes the row-overlap you'd get
-  from an unsized scrollable child inside a flex column, and the screen is
-  wrapped in `SafeAreaView` for notch/inset safety on phones.
+- **Find My Salt's "By Symptom" layout** (search + filter + full salt list,
+  formerly the standalone Directory screen) only gives the results
+  `FlatList` `flex: 1`; everything above it (search input, body-system
+  filter row) is a fixed, non-scrolling header block using a plain
+  horizontal `ScrollView` instead of a nested `FlatList` — this avoids the
+  row-overlap you'd get from an unsized scrollable child inside a flex
+  column, and the screen is wrapped in `SafeAreaView` for notch/inset
+  safety on phones. "By Birth Date" mode, having no list, stays a plain
+  `ScrollView`.
 - **Glass UI** (`src/components/Card.tsx`, `GradientBackdrop.tsx`) layers
   `expo-blur`'s `BlurView` + a semi-transparent tint over a full-screen
   `expo-linear-gradient` backdrop rendered once in `App.tsx`. All screen
