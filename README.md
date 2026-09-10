@@ -19,6 +19,8 @@ and record how well it worked over time.
 - **Zustand** for state management, persisted to **AsyncStorage**
 - **expo-notifications** for local follow-up reminders (2h / 12h / 24h)
 - **expo-file-system / expo-print / expo-sharing** for JSON + PDF export
+- **expo-location** (optional convenience) for filling in birth
+  latitude/longitude used by the Ascendant calculation
 - **@react-native-community/datetimepicker** for date/time inputs
 - Hand-rolled `StyleSheet`-based UI (no external UI kit), celestial dark/light
   theme with deep blues + gold accents
@@ -73,15 +75,45 @@ QR code with **Expo Go** on your device.
    tag; view a "Most Effective Salts" ranking, total-uses-vs-success-rate
    breakdown, and export your full history to JSON or a formatted PDF.
 6. **Profile & Settings** — Set name, birth date (directly typeable, auto-
-   fills Sun Sign), Ascendant, Moon Sign, dark mode, notification
+   fills Sun Sign), birth time & location (computes Moon Sign and Ascendant
+   via real astronomical formulas — see below), dark mode, notification
    preferences, and your glass UI gradient theme.
 7. **Glassmorphic UI** — Every card is a blurred, translucent glass surface
    (`expo-blur`) floating over a full-screen animated gradient backdrop.
    Six gradient presets (Nebula, Ocean, Sunset, Aurora, Rose Quartz,
-   Midnight) are selectable from Profile, each with a light/dark variant.
+   Midnight) are selectable from Profile, each with a light/dark variant —
+   and in dark mode, flat (non-blurred) surfaces like Chip backgrounds,
+   TextInput fields, and list rows are also tinted toward the selected
+   preset's hue instead of one fixed navy tone.
 8. **Smooth tab transitions** — Bottom tabs cross-fade/slide (`animation:
    'shift'`) instead of cutting abruptly, and the tab bar itself is a
    blurred glass surface.
+
+## Moon Sign & Ascendant Calculation
+
+Unlike the Sun Sign (which only needs a calendar date), the Moon Sign and
+Ascendant genuinely require birth **time** and **location** — the Moon
+moves through the zodiac in ~27.3 days, and the Ascendant (the point of the
+ecliptic rising on the eastern horizon) changes roughly every two hours.
+Profile has an optional "Birth Time & Location" section (local time,
+latitude/longitude — with an optional "Use Current Location" shortcut via
+`expo-location` — and the UTC offset in effect at that time/place) plus a
+"Calculate" button that runs the real formulas in `src/utils/astronomy.ts`:
+
+- **Moon position**: a truncated periodic-term series in the Meeus/Schlyter
+  tradition, accurate to roughly 0.3–0.5°.
+- **Ascendant**: the standard spherical-trigonometry formula relating local
+  sidereal time, latitude, and the obliquity of the ecliptic.
+
+Both were independently verified — the Moon formula against Meeus's
+published 1992-04-12 worked example, and the Ascendant formula from first
+principles (confirming the resulting ecliptic point actually sits on the
+horizon and is rising, not setting) — before being wired into the UI. The
+result is presented as a best-effort estimate, not a certainty; a birth
+time that's off by more than a few minutes, or one that falls right at a
+sign boundary, can shift the outcome, which is an inherent limitation of
+any simplified calculation. Manual sign pickers remain available below the
+calculator for anyone who already knows their placements.
 
 ## Notes on Implementation Choices
 

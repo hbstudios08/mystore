@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useColorScheme } from 'react-native';
 import { useAppStore } from '../store/useAppStore';
 import { LIGHT_THEME, DARK_THEME, ThemeColors, GRADIENT_THEMES, GradientThemeId } from '../constants/theme';
@@ -20,9 +21,13 @@ interface UseThemeResult {
 /**
  * Resolves the active theme. Users can force dark/light mode via their
  * profile setting; otherwise we fall back to the system preference. Also
- * resolves the selected gradient backdrop preset and its matching accent
- * color (with a safe fallback for profiles persisted before the
- * gradient-theme feature existed).
+ * resolves the selected gradient backdrop preset, its matching accent
+ * color, and — in dark mode — tints the flat "surface" colors (used by
+ * Chip's unselected state, TextInput backgrounds, list rows, etc.) toward
+ * the preset's own hue. Without this, every dark-mode surface that isn't
+ * inside a blurred glass Card fell back to one fixed navy tone no matter
+ * which gradient theme was selected. Light mode keeps its existing fixed
+ * palette (not reported as an issue, and lower risk to leave alone).
  */
 export function useTheme(): UseThemeResult {
   const darkMode = useAppStore((s) => s.profile.darkMode);
@@ -34,8 +39,18 @@ export function useTheme(): UseThemeResult {
   const gradient = isDark ? preset.dark : preset.light;
   const accent = isDark ? preset.accentDark : preset.accentLight;
 
+  const colors = useMemo<ThemeColors>(() => {
+    if (!isDark) return LIGHT_THEME;
+    return {
+      ...DARK_THEME,
+      surface: preset.darkSurface,
+      surfaceAlt: preset.darkSurfaceAlt,
+      card: preset.darkCard,
+    };
+  }, [isDark, preset]);
+
   return {
-    colors: isDark ? DARK_THEME : LIGHT_THEME,
+    colors,
     isDark,
     gradient,
     gradientThemeId: preset.id,

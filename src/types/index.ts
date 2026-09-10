@@ -96,6 +96,14 @@ import { GradientThemeId } from '../constants/theme';
 export interface UserProfile {
   name?: string;
   birthDate?: string; // ISO date string
+  /** Local wall-clock birth time, "HH:MM" 24-hour. Needed (with location) to compute Moon Sign / Ascendant. */
+  birthTime?: string;
+  /** Birth location latitude, decimal degrees (-90 to 90). */
+  birthLatitude?: number;
+  /** Birth location longitude, decimal degrees (-180 to 180, east positive). */
+  birthLongitude?: number;
+  /** UTC offset in effect at the birth date/time/location, decimal hours (e.g. -5, 5.5). */
+  birthUtcOffsetHours?: number;
   sunSign?: ZodiacId;
   ascendant?: ZodiacId;
   moonSign?: ZodiacId;

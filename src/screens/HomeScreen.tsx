@@ -25,14 +25,40 @@ export function HomeScreen() {
   const sunSign = profile.sunSign ? ZODIAC_MAP[profile.sunSign] : undefined;
   const primarySalt = sunSign ? CELL_SALT_MAP[sunSign.cellSaltId] : undefined;
 
-  const secondarySigns = useMemo(
-    () =>
-      [profile.ascendant, profile.moonSign]
-        .filter(Boolean)
-        .map((id) => ZODIAC_MAP[id as string])
-        .filter(Boolean),
-    [profile.ascendant, profile.moonSign]
-  );
+  const moonSign = profile.moonSign ? ZODIAC_MAP[profile.moonSign] : undefined;
+  const moonSalt = moonSign ? CELL_SALT_MAP[moonSign.cellSaltId] : undefined;
+
+  const risingSign = profile.ascendant ? ZODIAC_MAP[profile.ascendant] : undefined;
+  const risingSalt = risingSign ? CELL_SALT_MAP[risingSign.cellSaltId] : undefined;
+
+  function renderMinorSaltCard(sign: typeof moonSign, salt: typeof moonSalt, heading: string) {
+    if (!sign || !salt) return null;
+    return (
+      <Card style={{ marginTop: SPACING.sm }} padded>
+        <Pressable
+          onPress={() => navigation.navigate('CellSaltDetail', { saltId: salt.id })}
+          style={styles.highlightRow}
+        >
+          {/* 25% smaller than the Sun Sign card's 64px badge */}
+          <ZodiacBadge sign={sign} size={48} />
+          <View style={styles.highlightText}>
+            <Text style={[styles.highlightLabel, styles.minorLabel, { color: colors.textMuted }]}>
+              {heading}
+            </Text>
+            <Text style={[styles.highlightSalt, styles.minorSalt, { color: colors.text }]}>
+              {salt.commonName}
+            </Text>
+            <Text
+              style={[styles.highlightSub, styles.minorSub, { color: colors.textMuted }]}
+              numberOfLines={2}
+            >
+              {salt.rulingBodyPart}
+            </Text>
+          </View>
+        </Pressable>
+      </Card>
+    );
+  }
 
   return (
     <ScrollView
@@ -88,27 +114,10 @@ export function HomeScreen() {
         </Card>
       )}
 
-      {secondarySigns.length > 0 && (
+      {(moonSign || risingSign) && (
         <View style={{ marginTop: SPACING.md }}>
-          <Text style={[styles.smallLabel, { color: colors.textMuted }]}>
-            Secondary influences
-          </Text>
-          <View style={styles.rowWrap}>
-            {secondarySigns.map((sign) => {
-              const salt = CELL_SALT_MAP[sign.cellSaltId];
-              return (
-                <Pressable
-                  key={sign.id}
-                  onPress={() => navigation.navigate('CellSaltDetail', { saltId: salt.id })}
-                  style={[styles.pill, { borderColor: colors.border, backgroundColor: colors.surface }]}
-                >
-                  <Text style={{ color: colors.text, fontWeight: '600', fontSize: FONT_SIZES.xs }}>
-                    {sign.symbol} {salt.commonName}
-                  </Text>
-                </Pressable>
-              );
-            })}
-          </View>
+          {renderMinorSaltCard(moonSign, moonSalt, 'Moon Sign Salt')}
+          {renderMinorSaltCard(risingSign, risingSalt, 'Ascendant (Rising) Salt')}
         </View>
       )}
 
@@ -209,23 +218,15 @@ const styles = StyleSheet.create({
     fontSize: FONT_SIZES.sm,
     marginTop: 2,
   },
-  smallLabel: {
-    fontSize: FONT_SIZES.xs,
-    textTransform: 'uppercase',
-    fontWeight: '700',
-    marginBottom: SPACING.xs,
+  // 25% smaller variants used by the Moon Sign / Ascendant mini-cards
+  minorLabel: {
+    fontSize: FONT_SIZES.xs * 0.75,
   },
-  rowWrap: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+  minorSalt: {
+    fontSize: FONT_SIZES.lg * 0.75,
   },
-  pill: {
-    paddingHorizontal: SPACING.sm,
-    paddingVertical: 6,
-    borderRadius: 999,
-    borderWidth: 1,
-    marginRight: SPACING.sm,
-    marginBottom: SPACING.sm,
+  minorSub: {
+    fontSize: FONT_SIZES.sm * 0.75,
   },
   actionsRow: {
     flexDirection: 'row',

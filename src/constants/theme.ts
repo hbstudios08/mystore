@@ -130,6 +130,17 @@ export interface GradientPreset {
    * top of it (checked for ≥4.5:1 contrast).
    */
   accentDark: string;
+  /**
+   * Flat (non-blurred) surface colors for dark mode — used by things like
+   * Chip's unselected state, TextInput backgrounds, and list rows that
+   * don't sit inside a BlurView. Without these, every dark-mode surface
+   * fell back to a single fixed navy tone regardless of the selected
+   * gradient theme. Each is DARK_THEME's base surface blended ~32% toward
+   * this preset's gradient midtone (checked for ≥4.5:1 text contrast).
+   */
+  darkSurface: string;
+  darkSurfaceAlt: string;
+  darkCard: string;
 }
 
 export const GRADIENT_THEMES: Record<GradientThemeId, GradientPreset> = {
@@ -141,6 +152,9 @@ export const GRADIENT_THEMES: Record<GradientThemeId, GradientPreset> = {
     dark: ['#1B1440', '#2E1E63', '#4A2A82'],
     accentLight: '#6A3FD1',
     accentDark: '#B7A6F5',
+    darkSurface: '#1D1B46',
+    darkSurfaceAlt: '#222150',
+    darkCard: '#1F1D4B',
   },
   ocean: {
     id: 'ocean',
@@ -150,6 +164,9 @@ export const GRADIENT_THEMES: Record<GradientThemeId, GradientPreset> = {
     dark: ['#071D33', '#0B3355', '#0F4C75'],
     accentLight: '#1D6FA5',
     accentDark: '#8FCBEF',
+    darkSurface: '#122241',
+    darkSurfaceAlt: '#17274B',
+    darkCard: '#142447',
   },
   sunset: {
     id: 'sunset',
@@ -159,6 +176,9 @@ export const GRADIENT_THEMES: Record<GradientThemeId, GradientPreset> = {
     dark: ['#2B0F14', '#5A1F26', '#8A3A2D'],
     accentLight: '#B04A1F',
     accentDark: '#F5B48A',
+    darkSurface: '#2B1C32',
+    darkSurfaceAlt: '#31213C',
+    darkCard: '#2D1E38',
   },
   aurora: {
     id: 'aurora',
@@ -168,6 +188,9 @@ export const GRADIENT_THEMES: Record<GradientThemeId, GradientPreset> = {
     dark: ['#062420', '#0B3B37', '#125447'],
     accentLight: '#137862',
     accentDark: '#8EE0C9',
+    darkSurface: '#122538',
+    darkSurfaceAlt: '#172A42',
+    darkCard: '#14273D',
   },
   rosequartz: {
     id: 'rosequartz',
@@ -177,6 +200,9 @@ export const GRADIENT_THEMES: Record<GradientThemeId, GradientPreset> = {
     dark: ['#2B0F1C', '#4A1930', '#6E2748'],
     accentLight: '#C24B7C',
     accentDark: '#F5B8D2',
+    darkSurface: '#261A35',
+    darkSurfaceAlt: '#2B1F40',
+    darkCard: '#281C3B',
   },
   midnight: {
     id: 'midnight',
@@ -186,6 +212,9 @@ export const GRADIENT_THEMES: Record<GradientThemeId, GradientPreset> = {
     dark: ['#050814', '#0D1330', '#161F4C'],
     accentLight: '#2E3A63',
     accentDark: '#A8B4E0',
+    darkSurface: '#121835',
+    darkSurfaceAlt: '#181D40',
+    darkCard: '#141A3B',
   },
 };
 

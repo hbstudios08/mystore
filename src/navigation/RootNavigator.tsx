@@ -1,6 +1,8 @@
 import React from 'react';
+import { StyleSheet } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
+import { BlurView } from 'expo-blur';
 import { MainTabNavigator } from './MainTabNavigator';
 import { CellSaltDetailScreen } from '../screens/CellSaltDetailScreen';
 import { FindMySaltScreen } from '../screens/FindMySaltScreen';
@@ -30,8 +32,26 @@ export function RootNavigator() {
     <NavigationContainer theme={navTheme}>
       <Stack.Navigator
         screenOptions={{
-          headerStyle: { backgroundColor: colors.glassFillStrong },
-          headerTintColor: colors.text,
+          headerStyle: { backgroundColor: 'transparent' },
+          // A real blurred, opaque-enough backdrop (matching the tab bar's
+          // treatment) instead of a flat translucent color — a flat rgba
+          // color on the header can blend unpredictably with whatever
+          // gradient/content sits behind it, which is what let the back
+          // button lose contrast in some themes.
+          headerBackground: () => (
+            <BlurView
+              intensity={70}
+              tint={colors.glassTint}
+              style={[StyleSheet.absoluteFill, { backgroundColor: colors.glassFillStrong }]}
+            />
+          ),
+          // The back chevron/label always uses the theme's bright accent
+          // color, which is specifically tuned for guaranteed contrast —
+          // so it never blends into the header regardless of theme or
+          // light/dark mode. The title text stays in the normal reading
+          // color via headerTitleStyle below.
+          headerTintColor: accent,
+          headerTitleStyle: { color: colors.text },
           headerShadowVisible: false,
           contentStyle: { backgroundColor: 'transparent' },
         }}

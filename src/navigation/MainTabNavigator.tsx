@@ -30,8 +30,16 @@ export function MainTabNavigator() {
         // an abrupt cut.
         animation: 'shift',
         sceneStyle: { backgroundColor: 'transparent' },
-        headerStyle: { backgroundColor: colors.glassFillStrong },
-        headerTintColor: colors.text,
+        headerStyle: { backgroundColor: 'transparent' },
+        headerBackground: () => (
+          <BlurView
+            intensity={70}
+            tint={colors.glassTint}
+            style={[StyleSheet.absoluteFill, { backgroundColor: colors.glassFillStrong }]}
+          />
+        ),
+        headerTintColor: accent,
+        headerTitleStyle: { color: colors.text },
         headerShadowVisible: false,
         tabBarStyle: {
           backgroundColor: 'transparent',
