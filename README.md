@@ -61,8 +61,10 @@ QR code with **Expo Go** on your device.
 
 ## Core Features
 
-1. **Home Dashboard** — Zodiac wheel, sun/moon/rising sign highlights, quick
-   actions, and recent activity.
+1. **Home Dashboard** — Sun/Moon/Ascendant sign salt highlights (the latter
+   two always shown, with a prompt to add birth time & location in Profile
+   if not yet calculated), a zodiac wheel, quick actions, and recent
+   activity.
 2. **Find My Salt** — Two modes in one screen: "By Birth Date" (auto zodiac
    calculation, including the Capricorn year-wrap edge case) and "By
    Symptom" — a full searchable/filterable browse of all 12 salts (search
@@ -77,9 +79,10 @@ QR code with **Expo Go** on your device.
    tag; view a "Most Effective Salts" ranking, total-uses-vs-success-rate
    breakdown, and export your full history to JSON or a formatted PDF.
 5. **Profile & Settings** — Set name, birth date (directly typeable, auto-
-   fills Sun Sign), birth time & location (computes Moon Sign and Ascendant
-   via real astronomical formulas — see below), dark mode, notification
-   preferences, and your glass UI gradient theme.
+   fills Sun Sign, with a manual override picker), birth time & location
+   (Moon Sign and Ascendant are calculated automatically the moment every
+   field is filled in — see below), dark mode, notification preferences,
+   and your glass UI gradient theme.
 6. **Glassmorphic UI** — Every card is a blurred, translucent glass surface
    (`expo-blur`) floating over a full-screen animated gradient backdrop.
    Six gradient presets (Nebula, Ocean, Sunset, Aurora, Rose Quartz,
@@ -99,8 +102,10 @@ moves through the zodiac in ~27.3 days, and the Ascendant (the point of the
 ecliptic rising on the eastern horizon) changes roughly every two hours.
 Profile has an optional "Birth Time & Location" section (local time,
 latitude/longitude — with an optional "Use Current Location" shortcut via
-`expo-location` — and the UTC offset in effect at that time/place) plus a
-"Calculate" button that runs the real formulas in `src/utils/astronomy.ts`:
+`expo-location` — and the UTC offset in effect at that time/place). The
+moment every one of those fields is filled in, Moon Sign and Ascendant are
+calculated automatically (no button to press) by the real formulas in
+`src/utils/astronomy.ts`:
 
 - **Moon position**: a truncated periodic-term series in the Meeus/Schlyter
   tradition, accurate to roughly 0.3–0.5°.
@@ -114,8 +119,10 @@ horizon and is rising, not setting) — before being wired into the UI. The
 result is presented as a best-effort estimate, not a certainty; a birth
 time that's off by more than a few minutes, or one that falls right at a
 sign boundary, can shift the outcome, which is an inherent limitation of
-any simplified calculation. Manual sign pickers remain available below the
-calculator for anyone who already knows their placements.
+any simplified calculation. There's no manual override for Moon Sign or
+Ascendant — only Sun Sign has a manual picker (in addition to being set
+automatically from Birth Date), since it's the one placement that doesn't
+depend on time/location.
 
 ## Notes on Implementation Choices
 

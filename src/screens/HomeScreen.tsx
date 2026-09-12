@@ -31,29 +31,55 @@ export function HomeScreen() {
   const risingSign = profile.ascendant ? ZODIAC_MAP[profile.ascendant] : undefined;
   const risingSalt = risingSign ? CELL_SALT_MAP[risingSign.cellSaltId] : undefined;
 
-  function renderMinorSaltCard(sign: typeof moonSign, salt: typeof moonSalt, heading: string) {
-    if (!sign || !salt) return null;
+  function renderMinorSaltCard(
+    sign: typeof moonSign,
+    salt: typeof moonSalt,
+    heading: string,
+    placeholderIcon: string
+  ) {
     return (
       <Card style={{ marginTop: SPACING.sm }} padded>
         <Pressable
-          onPress={() => navigation.navigate('CellSaltDetail', { saltId: salt.id })}
+          disabled={!salt}
+          onPress={() => salt && navigation.navigate('CellSaltDetail', { saltId: salt.id })}
           style={styles.highlightRow}
         >
-          {/* 25% smaller than the Sun Sign card's 64px badge */}
-          <ZodiacBadge sign={sign} size={48} />
+          {sign ? (
+            <ZodiacBadge sign={sign} size={48} />
+          ) : (
+            <View
+              style={[
+                styles.placeholderBadge,
+                { borderColor: colors.border, backgroundColor: colors.surfaceAlt },
+              ]}
+            >
+              <Text style={{ fontSize: 20 }}>{placeholderIcon}</Text>
+            </View>
+          )}
           <View style={styles.highlightText}>
             <Text style={[styles.highlightLabel, styles.minorLabel, { color: colors.textMuted }]}>
               {heading}
             </Text>
-            <Text style={[styles.highlightSalt, styles.minorSalt, { color: colors.text }]}>
-              {salt.commonName}
-            </Text>
-            <Text
-              style={[styles.highlightSub, styles.minorSub, { color: colors.textMuted }]}
-              numberOfLines={2}
-            >
-              {salt.rulingBodyPart}
-            </Text>
+            {salt ? (
+              <>
+                <Text style={[styles.highlightSalt, styles.minorSalt, { color: colors.text }]}>
+                  {salt.commonName}
+                </Text>
+                <Text
+                  style={[styles.highlightSub, styles.minorSub, { color: colors.textMuted }]}
+                  numberOfLines={2}
+                >
+                  {salt.rulingBodyPart}
+                </Text>
+              </>
+            ) : (
+              <Text
+                style={[styles.highlightSub, styles.minorSub, { color: colors.textMuted }]}
+                numberOfLines={2}
+              >
+                Add your birth time &amp; location in Profile to calculate this.
+              </Text>
+            )}
           </View>
         </Pressable>
       </Card>
@@ -114,12 +140,10 @@ export function HomeScreen() {
         </Card>
       )}
 
-      {(moonSign || risingSign) && (
-        <View style={{ marginTop: SPACING.md }}>
-          {renderMinorSaltCard(moonSign, moonSalt, 'Moon Sign Salt')}
-          {renderMinorSaltCard(risingSign, risingSalt, 'Ascendant (Rising) Salt')}
-        </View>
-      )}
+      <View style={{ marginTop: SPACING.md }}>
+        {renderMinorSaltCard(moonSign, moonSalt, 'Moon Sign Salt', '\u{1F319}')}
+        {renderMinorSaltCard(risingSign, risingSalt, 'Ascendant (Rising) Salt', '\u2B06\uFE0F')}
+      </View>
 
       {/* Zodiac wheel */}
       <View style={{ marginTop: SPACING.xl }}>
@@ -227,6 +251,14 @@ const styles = StyleSheet.create({
   },
   minorSub: {
     fontSize: FONT_SIZES.sm * 0.75,
+  },
+  placeholderBadge: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    borderWidth: StyleSheet.hairlineWidth,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   actionsRow: {
     flexDirection: 'row',

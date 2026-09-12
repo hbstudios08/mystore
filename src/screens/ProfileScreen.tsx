@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, TextInput, Switch, Alert, Pressable } from 'react-native';
 import * as Location from 'expo-location';
 import { useTheme } from '../utils/useTheme';
 import { useAppStore } from '../store/useAppStore';
 import { ZODIAC_SIGNS, ZODIAC_MAP, getZodiacSignForDate } from '../constants/zodiac';
+import { CELL_SALT_MAP } from '../constants/cellSalts';
 import { Card } from '../components/Card';
 import { DateInput } from '../components/DateInput';
 import { TimeInput } from '../components/TimeInput';
@@ -35,6 +36,47 @@ export function ProfileScreen() {
   );
   const [locationLoading, setLocationLoading] = useState(false);
 
+  // Automatically compute Moon Sign & Ascendant the moment every required
+  // birth detail is present — no manual "Calculate" step. Re-runs whenever
+  // any of the five inputs change; only writes when the computed sign
+  // actually differs from what's stored, so this can't loop.
+  useEffect(() => {
+    if (
+      !profile.birthDate ||
+      !profile.birthTime ||
+      profile.birthLatitude === undefined ||
+      profile.birthLongitude === undefined ||
+      profile.birthUtcOffsetHours === undefined
+    ) {
+      return;
+    }
+
+    const details = {
+      date: new Date(profile.birthDate),
+      time: profile.birthTime,
+      latitude: profile.birthLatitude,
+      longitude: profile.birthLongitude,
+      utcOffsetHours: profile.birthUtcOffsetHours,
+    };
+
+    const moonSignId = computeMoonSign(details);
+    const ascendantId = computeAscendant(details);
+
+    const updates: { moonSign?: ZodiacId; ascendant?: ZodiacId } = {};
+    if (moonSignId && moonSignId !== profile.moonSign) updates.moonSign = moonSignId;
+    if (ascendantId && ascendantId !== profile.ascendant) updates.ascendant = ascendantId;
+
+    if (Object.keys(updates).length > 0) {
+      updateProfile(updates);
+    }
+  }, [
+    profile.birthDate,
+    profile.birthTime,
+    profile.birthLatitude,
+    profile.birthLongitude,
+    profile.birthUtcOffsetHours,
+  ]);
+
   function handleSaveName() {
     updateProfile({ name: name.trim() || undefined });
   }
@@ -44,8 +86,8 @@ export function ProfileScreen() {
     updateProfile({ birthDate: date.toISOString(), sunSign: sign.id });
   }
 
-  function selectSign(field: 'sunSign' | 'ascendant' | 'moonSign', id: ZodiacId) {
-    updateProfile({ [field]: profile[field] === id ? undefined : id });
+  function selectSign(id: ZodiacId) {
+    updateProfile({ sunSign: profile.sunSign === id ? undefined : id });
   }
 
   async function handleToggleNotifications(value: boolean) {
@@ -118,68 +160,16 @@ export function ProfileScreen() {
     }
   }
 
-  function handleCalculate() {
-    const missing: string[] = [];
-    if (!birthDate) missing.push('Birth Date');
-    if (!profile.birthTime) missing.push('Birth Time');
-    if (profile.birthLatitude === undefined) missing.push('Latitude');
-    if (profile.birthLongitude === undefined) missing.push('Longitude');
-    if (profile.birthUtcOffsetHours === undefined) missing.push('UTC Offset');
-
-    if (missing.length > 0) {
-      Alert.alert('Missing Details', `Please fill in: ${missing.join(', ')}`);
-      return;
-    }
-
-    const details = {
-      date: birthDate as Date,
-      time: profile.birthTime as string,
-      latitude: profile.birthLatitude as number,
-      longitude: profile.birthLongitude as number,
-      utcOffsetHours: profile.birthUtcOffsetHours as number,
-    };
-
-    const moonSignId = computeMoonSign(details);
-    const ascendantId = computeAscendant(details);
-
-    if (!moonSignId || !ascendantId) {
-      Alert.alert('Couldn\u2019t Calculate', 'Please double-check the birth time format (HH:MM).');
-      return;
-    }
-
-    updateProfile({ moonSign: moonSignId, ascendant: ascendantId });
-    Alert.alert(
-      'Estimated',
-      `Moon Sign: ${ZODIAC_MAP[moonSignId].name}\nAscendant: ${ZODIAC_MAP[ascendantId].name}\n\n` +
-        'This is a best-effort estimate from the birth details you entered — accuracy ' +
-        'depends on how precise the time and location are.'
-    );
-  }
-
-  function renderSignPicker(field: 'sunSign' | 'ascendant' | 'moonSign', label: string) {
-    const needsManualNote = field === 'ascendant' || field === 'moonSign';
-    return (
-      <Card style={{ marginTop: SPACING.md }}>
-        <Text style={[styles.label, { color: colors.text }]}>{label}</Text>
-        {needsManualNote && (
-          <Text style={{ color: colors.textMuted, fontSize: FONT_SIZES.xs, marginTop: 2, marginBottom: SPACING.xs }}>
-            Calculated automatically once you fill in Birth Time &amp; Location above and tap
-            Calculate — or select manually below if you already know it.
-          </Text>
-        )}
-        <View style={styles.chipWrap}>
-          {ZODIAC_SIGNS.map((sign) => (
-            <Chip
-              key={sign.id}
-              label={`${sign.symbol} ${sign.name}`}
-              selected={profile[field] === sign.id}
-              onPress={() => selectSign(field, sign.id)}
-            />
-          ))}
-        </View>
-      </Card>
-    );
-  }
+  const moonSalt = profile.moonSign ? CELL_SALT_MAP[ZODIAC_MAP[profile.moonSign].cellSaltId] : undefined;
+  const ascendantSalt = profile.ascendant
+    ? CELL_SALT_MAP[ZODIAC_MAP[profile.ascendant].cellSaltId]
+    : undefined;
+  const hasAllBirthDetails =
+    !!profile.birthDate &&
+    !!profile.birthTime &&
+    profile.birthLatitude !== undefined &&
+    profile.birthLongitude !== undefined &&
+    profile.birthUtcOffsetHours !== undefined;
 
   return (
     <ScrollView style={{ backgroundColor: 'transparent' }} contentContainerStyle={styles.container}>
@@ -216,7 +206,7 @@ export function ProfileScreen() {
         <Text style={{ color: colors.textMuted, fontSize: FONT_SIZES.xs, marginTop: 2, marginBottom: SPACING.md }}>
           Optional — but needed to calculate your Moon Sign and Ascendant, since (unlike
           your Sun Sign) those depend on the exact time and place you were born, not just
-          the date.
+          the date. Once every field below is filled in, both are calculated automatically.
         </Text>
 
         <Text style={[styles.fieldLabel, { color: colors.textMuted }]}>Birth Time (local, 24-hour)</Text>
@@ -291,16 +281,35 @@ export function ProfileScreen() {
           (or near) your actual birthplace, then adjust if needed.
         </Text>
 
-        <Button
-          label="Calculate Moon Sign & Ascendant"
-          onPress={handleCalculate}
-          style={{ marginTop: SPACING.lg }}
-        />
+        {hasAllBirthDetails && (
+          <View style={[styles.calculatedBox, { borderColor: colors.border, backgroundColor: colors.surfaceAlt }]}>
+            <Text style={{ color: colors.text, fontSize: FONT_SIZES.sm, fontWeight: '700' }}>
+              {'\u2728'} Calculated from your birth details
+            </Text>
+            <Text style={{ color: colors.textMuted, fontSize: FONT_SIZES.xs, marginTop: 2 }}>
+              Moon Sign: {profile.moonSign ? ZODIAC_MAP[profile.moonSign].name : '\u2014'}
+              {moonSalt ? ` (${moonSalt.commonName})` : ''}
+              {'\n'}
+              Ascendant: {profile.ascendant ? ZODIAC_MAP[profile.ascendant].name : '\u2014'}
+              {ascendantSalt ? ` (${ascendantSalt.commonName})` : ''}
+            </Text>
+          </View>
+        )}
       </Card>
 
-      {renderSignPicker('sunSign', 'Sun Sign')}
-      {renderSignPicker('ascendant', 'Ascendant (Rising)')}
-      {renderSignPicker('moonSign', 'Moon Sign')}
+      <Card style={{ marginTop: SPACING.md }}>
+        <Text style={[styles.label, { color: colors.text }]}>Sun Sign</Text>
+        <View style={styles.chipWrap}>
+          {ZODIAC_SIGNS.map((sign) => (
+            <Chip
+              key={sign.id}
+              label={`${sign.symbol} ${sign.name}`}
+              selected={profile.sunSign === sign.id}
+              onPress={() => selectSign(sign.id)}
+            />
+          ))}
+        </View>
+      </Card>
 
       <Card style={{ marginTop: SPACING.lg }}>
         <Text style={[styles.label, { color: colors.text }]}>Gradient Theme</Text>
@@ -407,5 +416,11 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: RADIUS.pill,
+  },
+  calculatedBox: {
+    marginTop: SPACING.lg,
+    padding: SPACING.md,
+    borderRadius: RADIUS.md,
+    borderWidth: StyleSheet.hairlineWidth,
   },
 });
