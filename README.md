@@ -157,7 +157,34 @@ depend on time/location.
   `expo-linear-gradient` backdrop rendered once in `App.tsx`. All screen
   containers use `backgroundColor: 'transparent'` so the gradient shows
   through everywhere; the gradient itself cross-fades (via `Animated`) when
-  you switch presets or toggle dark mode.
+  you switch presets or toggle dark mode. On Android, `BlurView` here
+  intentionally uses the default `blurMethod` (`'none'`) — a flat
+  semi-transparent view rather than a true blur. Real Android blur
+  (`blurTarget` + `BlurTargetView` + `blurMethod="dimezisBlurViewSdk31Plus"`)
+  was tried and caused the whole app to crash on any touch on-device; see
+  the "Attempted but reverted" note below before trying this again.
+
+## Attempted But Reverted
+
+**Real Android blur (`BlurTargetView` + `blurMethod="dimezisBlurViewSdk31Plus"`
++ `freezeOnBlur: true` on the stack navigator).** This was implemented to fix
+two real on-device issues (Android's default blur fallback looking visibly
+"off," especially in light mode; and a brief content-overlap after
+navigating via non-tab buttons — see the Known Gotchas doc for the full
+diagnosis). It broke the build far worse than the bugs it fixed: the app
+crashed on any touch — any button, any tab — on the physical device. All
+three changes shipped together in one pass, so which one actually caused
+the crash was never isolated; no crash log (`adb logcat`) was available to
+diagnose it properly, so the whole thing was reverted rather than guessed
+at further. Everything is back to the pre-attempt state: plain `BlurView`
+with the Android default (`blurMethod: 'none'`, a flat semi-transparent
+view — correctly documented Expo behavior, not an error), no
+`BlurTargetView`, no `freezeOnBlur`.
+
+If revisiting this: get a real crash log first, and change **one** of the
+three things at a time (BlurTargetView alone, then blurMethod alone, then
+freezeOnBlur alone), verifying on-device after each before adding the next
+— not all three in the same build, the way this attempt did it.
 
 ## Suggested Next Steps
 

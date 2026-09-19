@@ -2,7 +2,7 @@
   "expo": {
     "name": "Astro Salts",
     "slug": "cell-salts-astrology",
-    "version": "1.0.0",
+    "version": "1.0.3",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -21,9 +21,9 @@
       "package": "com.hbstudios.astrosalts",
       "adaptiveIcon": {
         "backgroundColor": "#0B0E23",
-        "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
-        "monochromeImage": "./assets/android-icon-monochrome.png"
+        "foregroundImage": "./assets/icon.png",
+        "backgroundImage": "./assets/icon.png",
+        "monochromeImage": "./assets/icon.png"
       },
       "predictiveBackGestureEnabled": false,
       "permissions": ["SCHEDULE_EXACT_ALARM", "POST_NOTIFICATIONS", "ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"]
